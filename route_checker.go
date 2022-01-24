@@ -2,21 +2,23 @@ package gin_route_checker
 
 import (
 	"errors"
+	"net/http"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 	unitTest "github.com/golden-protocol/gin_unit_test"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 )
 
 var (
 	routes = make(Routes)
 )
 
-func SetRoute(method, route string, statusCode int) {
+func SetRoute(method, route string, statusCode int, headers map[string]string) {
 	routes[route] = &RouteOptions{
-		Method: method,
+		Method:     method,
 		StatusCode: statusCode,
+		Headers:    headers,
 	}
 }
 
@@ -41,7 +43,7 @@ func CheckRoutes(server *gin.Engine, test *testing.T) error {
 	unitTest.SetRouter(server)
 	for route, opts := range routes {
 		_, resp, err := unitTest.TestOrdinaryHandler(
-			opts.Method, route, "json", nil, nil)
+			opts.Method, route, "json", nil, opts.Headers)
 		if err != nil {
 			return err
 		}
