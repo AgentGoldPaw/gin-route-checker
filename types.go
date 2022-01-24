@@ -1,4 +1,4 @@
-package github.com/golden-protocol/gin-route-checker
+package ginroutechecker
 
 type RouteOptions struct {
 	Method     string
