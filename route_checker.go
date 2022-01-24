@@ -1,4 +1,4 @@
-package gin_route_checker
+package github.com/golden-protocol/gin-route-checker
 
 import (
 	"errors"
