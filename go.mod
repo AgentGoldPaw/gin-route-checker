@@ -1,4 +1,4 @@
-module github.com/golden-protocol/gin-route-checker
+module gin-route-checker
 
 go 1.17
 
