@@ -6,4 +6,4 @@ type RouteOptions struct {
 	Headers    map[string]string
 }
 
-type Routes map[string]*RouteOptions
+type Routes map[string][]*RouteOptions
