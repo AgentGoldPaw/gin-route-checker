@@ -14,11 +14,11 @@ var (
 	routes = make(Routes)
 )
 
-func SetRoute(methods []string, route string, statusCode int, headers map[string]string) {
+func SetRoute(methods []string, route string, statusCodes []int, headers map[string]string) {
 	routes[route] = &RouteOptions{
-		Methods:    methods,
-		StatusCode: statusCode,
-		Headers:    headers,
+		Methods:     methods,
+		StatusCodes: statusCodes,
+		Headers:     headers,
 	}
 }
 
@@ -45,13 +45,13 @@ func SetRoutes(r map[string]*RouteOptions) error {
 func CheckRoutes(server *gin.Engine, test *testing.T) error {
 	unitTest.SetRouter(server)
 	for route, opts := range routes {
-		for _, method := range opts.Methods {
+		for i, method := range opts.Methods {
 			_, resp, err := unitTest.TestOrdinaryHandler(
 				method, route, "json", nil, opts.Headers)
 			if err != nil {
 				return err
 			}
-			assert.Equal(test, opts.StatusCode, resp.StatusCode)
+			assert.Equal(test, opts.StatusCodes[i], resp.StatusCode)
 
 		}
 
