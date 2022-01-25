@@ -14,9 +14,9 @@ var (
 	routes = make(Routes)
 )
 
-func SetRoute(method, route string, statusCode int, headers map[string]string) {
+func SetRoute(methods []string, route string, statusCode int, headers map[string]string) {
 	routes[route] = &RouteOptions{
-		Method:     method,
+		Methods:    methods,
 		StatusCode: statusCode,
 		Headers:    headers,
 	}
@@ -24,16 +24,19 @@ func SetRoute(method, route string, statusCode int, headers map[string]string) {
 
 func SetRoutes(r map[string]*RouteOptions) error {
 	for _, opts := range r {
-		switch opts.Method {
-		case http.MethodGet:
-		case http.MethodPost:
-		case http.MethodDelete:
-		case http.MethodPatch:
-		case http.MethodPut:
-			continue
-		default:
-			return errors.New("invalid method")
+		for _, method := range opts.Methods {
+			switch method {
+			case http.MethodGet:
+			case http.MethodPost:
+			case http.MethodDelete:
+			case http.MethodPatch:
+			case http.MethodPut:
+				continue
+			default:
+				return errors.New("invalid method")
+			}
 		}
+
 	}
 	routes = r
 	return nil
@@ -42,12 +45,16 @@ func SetRoutes(r map[string]*RouteOptions) error {
 func CheckRoutes(server *gin.Engine, test *testing.T) error {
 	unitTest.SetRouter(server)
 	for route, opts := range routes {
-		_, resp, err := unitTest.TestOrdinaryHandler(
-			opts.Method, route, "json", nil, opts.Headers)
-		if err != nil {
-			return err
+		for _, method := range opts.Methods {
+			_, resp, err := unitTest.TestOrdinaryHandler(
+				method, route, "json", nil, opts.Headers)
+			if err != nil {
+				return err
+			}
+			assert.Equal(test, opts.StatusCode, resp.StatusCode)
+
 		}
-		assert.Equal(test, opts.StatusCode, resp.StatusCode)
+
 	}
 	return nil
 }
