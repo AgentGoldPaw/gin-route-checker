@@ -35,8 +35,8 @@ func SetRoutes(r map[string][]*RouteOptions) error {
 
 func CheckRoutes(server *gin.Engine, test *testing.T) error {
 	unitTest.SetRouter(server)
-	for route, methods := range routes {
-		for _, opts := range methods {
+	for route, routeOptions := range routes {
+		for _, opts := range routeOptions {
 			_, resp, err := unitTest.TestOrdinaryHandler(
 				opts.Method, route, "json", nil, opts.Headers)
 			if err != nil {
